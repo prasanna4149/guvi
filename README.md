@@ -128,3 +128,7 @@ The system doesn't just "chat"; it embodies a character.
 ---
 
 *Project developed for educational and security research purposes.*
+
+## 👥 Contributors
+- **Prasanna Patil**
+- **Shaunak Chorge**
