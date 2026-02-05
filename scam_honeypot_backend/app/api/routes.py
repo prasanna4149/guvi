@@ -9,18 +9,32 @@ from app.memory.store import memory_store
 router = APIRouter()
 controller = AgentController()
 
+
 @router.post("/message", response_model=MessageResponse)
-async def handle_message(
-    request: MessageRequest
-):
+async def handle_message(request: MessageRequest, api_key: str = Depends(get_api_key)):
     try:
+        # Normalize Input
+        # 1. ID: Tester uses sessionId, we use conversation_id
+        c_id = request.conversation_id or request.sessionId
+        if not c_id:
+            import uuid
+
+            c_id = str(uuid.uuid4())
+
+        # 2. Message: Tester uses {"text": "...", ...}, we use plain str
+        msg_text = ""
+        if isinstance(request.message, dict):
+            msg_text = request.message.get("text", "")
+        else:
+            msg_text = str(request.message)
+
         # 1. Processing via Agent Controller
-        reply, meta = await controller.process_turn(request.conversation_id, request.message)
-        
+        reply, meta = await controller.process_turn(c_id, msg_text)
+
         # 2. Side-effect: Extract Intel (could be inside controller, but keeping separate for cleanliness)
-        new_intel = IntelExtractor.extract(request.message, meta.get("turn", 0))
+        new_intel = IntelExtractor.extract(msg_text, meta.get("turn", 0))
         if new_intel:
-            state = await memory_store.get_conversation(request.conversation_id)
+            state = await memory_store.get_conversation(c_id)
             if state:
                 state.extracted_data.extend(new_intel)
                 meta["new_intel"] = len(new_intel)
@@ -28,7 +42,7 @@ async def handle_message(
                 await memory_store.save_conversation(state)
 
         # 3. Build Response
-        return ResponseBuilder.build(request.conversation_id, reply, meta)
-        
+        return ResponseBuilder.build(c_id, reply, meta)
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
