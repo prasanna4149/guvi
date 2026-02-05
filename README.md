@@ -1,6 +1,5 @@
 # Agentic Honey-Pot 🍯
 
-**Status:** Active Development
 
 ## Overview
 Agentic Honey-Pot is a sophisticated counter-scam framework designed to engage scammers with AI-powered personas. By simulating realistic victims (e.g., elderly, confused individuals), the system wastes scammers' time, collects intelligence, and prevents them from targeting real victims.
