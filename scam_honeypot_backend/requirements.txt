@@ -5,3 +5,4 @@ pydantic-settings
 scalar-fastapi
 httpx
 google-genai
+groq

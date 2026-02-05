@@ -39,6 +39,10 @@ function App() {
       const res = await axios.post('http://localhost:8000/api/v1/message', {
         conversation_id: conversationId,
         message: userMsg
+      }, {
+        headers: {
+          'X-API-Key': 'secret-honey-key'
+        }
       })
 
       const data = res.data
@@ -85,7 +89,7 @@ function App() {
 
           {messages.map((msg, i) => (
             <div key={i} className={`message ${msg.role}`}>
-              {msg.role === 'agent' && <span style={{ fontSize: '0.7em', color: '#888', display: 'block', marginBottom: '4px' }}>Agent (Gemini 2.0)</span>}
+              {msg.role === 'agent' && <span style={{ fontSize: '0.7em', color: '#888', display: 'block', marginBottom: '4px' }}>Agent</span>}
               {msg.content}
             </div>
           ))}

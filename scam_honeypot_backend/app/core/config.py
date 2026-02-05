@@ -11,9 +11,10 @@ class Settings(BaseSettings):
     
     # Agent Settings
     MAX_TURNS: int = 20
-    GEMINI_API_KEY: Optional[str] = None
+    GROQ_API_KEY: Optional[str] = None
     
     class Config:
         env_file = ".env"
+        extra = "ignore"
 
 settings = Settings()
