@@ -6,5 +6,6 @@ class IntelValidator:
         if intel.type == "UPI":
             return "@" in intel.value
         if intel.type == "URL":
-            return intel.value.startswith("http")
+            # Allow schemeless urls, just check for dot and length
+            return "." in intel.value and len(intel.value) > 3
         return True
