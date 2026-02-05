@@ -4,12 +4,18 @@ from app.agent.strategy import StrategySelector
 from app.agent.belief import BeliefSystem
 from app.agent.generator import LLMGenerator
 from app.memory.store import memory_store
+from app.core.security import Guardrail
 
 class AgentController:
     def __init__(self):
         self.generator = LLMGenerator()
 
     async def process_turn(self, conversation_id: str, user_text: str) -> tuple[str, dict]:
+        # 0. Security Guardrail
+        if Guardrail.check_prompt_injection(user_text):
+            import random
+            return random.choice(Guardrail.CONFUSION_RESPONSES), {"scam_detected": False, "strategy": "GUARDRAIL"}
+
         # 1. Load State
         state = await memory_store.get_conversation(conversation_id)
         if not state:
